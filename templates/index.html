@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>datetime.link</title>
+	<meta name="viewport" content="width=device-width">
+	
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap">
+	<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+	<main id="app">
+		<datetime-zone>
+			<datetime-zoneinfo>
+				<datetime-zonename>India Standard Time (IST)</datetime-zonename>
+				<datetime-zoneoffset>(UTC +5:30)</datetime-zoneoffset>
+			</datetime-zoneinfo>
+			<datetime-datetime>
+				<datetime-date date="2020-06-02">2020-06-02</datetime-date>
+				<datetime-time time="14:00">14:00</datetime-time>
+			</datetime-datetime>
+		</datetime-zone>
+		<datetime-zone>
+			<datetime-zoneinfo>
+				<datetime-zonename>Singapore Time (SGT)</datetime-zonename>
+				<datetime-zoneoffset>(UTC +8)</datetime-zoneoffset>
+			</datetime-zoneinfo>
+			<datetime-datetime>
+				<datetime-date date="2020-06-02">2020-06-02</datetime-date>
+				<datetime-time time="11:30">11:30</datetime-time>
+			</datetime-datetime>
+		</datetime-zone>
+		<datetime-zone>
+			<datetime-zoneinfo>
+				<datetime-zonename>Singapore</datetime-zonename>
+				<datetime-zoneoffset>(UTC +8)</datetime-zoneoffset>
+			</datetime-zoneinfo>
+			<datetime-datetime>
+				<datetime-date date="2020-06-02">2020-06-02</datetime-date>
+				<datetime-time time="11:30">11:30</datetime-time>
+			</datetime-datetime>
+		</datetime-zone>
+	</main>
+
+	<footer>
+		<ul class="list-inline">
+			<!--
+			--><li><a href="https://github.com/serverwentdown/datetime.link" target="_blank">About datetime.link</a></li><!--
+			--><li><a href="https://github.com/serverwentdown/datetime.link/issues/new" target="_blank">Found a bug?</a></li><!--
+			-->
+		</ul>
+	</footer>
+
+	<script src="/js/third-party/luxon.min.js"></script>
+	<script src="/js/interactive.js" async></script>
+</body>
+</html>
