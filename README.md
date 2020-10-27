@@ -12,3 +12,22 @@ Sometimes, you want to refer to a point in time, but want to provide a timezone 
 To achieve backwards compatibility and usability without JavaScript, the dates must be converted and rendered into pure HTML. This makes cURL a working target. 
 
 Progressive enhancement extends on the UI by providing a visual editor for timezones, dates and times that change the URL. This is done with JavaScript and native input elements. In the future custom input elements could replace the native ones.
+
+## Timezone Specifiers
+
+### `tzdata`
+
+These are defined in the ICANN/IETF database. Examples:
+
+- Asia/Kolkata (India)
+- Asia/Singapore (Singapore)
+- America/Mexico_City (Mexico)
+- Asia/Saigon (Vietnam)
+- America/Los_Angeles (Pacific)
+
+### GeoNames
+
+Sources:
+- `cities15000.txt`
+- `countryInfo.txt`
+- 

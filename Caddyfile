@@ -1,0 +1,5 @@
+:2015 {
+	root .
+	file_server
+	try_files {path} templates/{path} templates/{path}/index.html
+}
