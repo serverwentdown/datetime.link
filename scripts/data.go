@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"regexp"
 	"strings"
 )
 
@@ -87,6 +88,8 @@ type City struct {
 	Timezone    string   `json:"t"`
 }
 
+// TODO: might be better to have IDs be City_Administrative_SG and the City struct having Names, Administrative, Country as pure text
+
 func CityFromRecord(record []string) (string, City) {
 	name := normalizeName(record[2])
 	names := splitNames(record[3])
@@ -101,8 +104,10 @@ func CityFromRecord(record []string) (string, City) {
 	}
 }
 
+var re = regexp.MustCompile(`[^a-zA-Z1-9]`)
+
 func normalizeName(name string) string {
-	return strings.ReplaceAll(name, " ", "_")
+	return re.ReplaceAllString(name, "_")
 }
 
 func splitNames(names string) []string {
