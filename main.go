@@ -20,7 +20,7 @@ func main() {
 	server := &http.Server{
 		Addr:         listen,
 		ReadTimeout:  5 * time.Second,
-		WriteTimeout: 10 * time.Second,
+		WriteTimeout: 5 * time.Second,
 	}
 
 	tmpl, err = template.ParseGlob("templates/*")
@@ -42,7 +42,7 @@ func main() {
 func index(w http.ResponseWriter, req *http.Request) {
 	var err error
 
-	if req.Method != http.MethodGet {
+	if req.Method != http.MethodGet && req.Method != http.MethodHead {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
@@ -50,21 +50,31 @@ func index(w http.ResponseWriter, req *http.Request) {
 	accept := req.Header.Get("Accept")
 	responseType := chooseResponseType(accept)
 
+	templateName := ""
 	switch responseType {
 	case responsePlain:
-		w.WriteHeader(http.StatusNotImplemented)
+		templateName = "index.txt"
 	case responseHTML:
-		indexTmpl := tmpl.Lookup("index.html")
-		if indexTmpl == nil {
-			log.Printf("Unable to find index template")
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		err = indexTmpl.Execute(w, nil)
-		if err != nil {
-			log.Printf("Error: %v", err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
+		templateName = "index.html"
+	case responseUnknown:
+		w.WriteHeader(http.StatusNotAcceptable)
+		return
+	}
+
+	t := tmpl.Lookup(templateName)
+	if t == nil {
+		log.Printf("Unable to find index template")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if req.Method == http.MethodHead {
+		return
+	}
+	err = t.Execute(w, nil)
+	if err != nil {
+		log.Printf("Error: %v", err)
+		// Usually, the following will fail
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 }

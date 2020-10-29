@@ -1,0 +1,221 @@
+*, *:before, *:after {
+	box-sizing: border-box;
+}
+
+html {
+	font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; 
+	font-feature-settings: "case", "tnum", "ss03", "cv09", "cv08", "cv10", "cv11";
+	line-height: 1.5;
+}
+@supports (font-variation-settings: normal) {
+	html {
+		font-family: 'Inter var', -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; 
+	}
+}
+@media (max-width: 400px) {
+	html {
+		font-size: 87.5%;
+	}
+}
+@media (min-width: 675px) {
+	html {
+		font-size: 112.5%;
+	}
+}
+@media (min-width: 1024px) {
+	html {
+		font-size: 125%;
+	}
+}
+
+body {
+	margin: 0;
+}
+
+main,
+header,
+footer {
+	display: block;
+}
+
+/* Layout */
+
+html {
+	height: 100%;
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+	min-height: 100%;
+}
+
+main,
+footer {
+	margin: 0 auto;
+
+	width: 100%;
+	max-width: 40rem;
+}
+
+main {
+	flex-grow: 1;
+}
+
+footer {
+	padding: 2rem;
+}
+
+/* Essentials */
+
+.list-inline {
+	list-style: none;
+	padding: 0;
+}
+.list-inline li {
+	display: inline-block;
+}
+.list-inline li:before {
+	content: "\2022";
+	padding: 0 0.25rem;
+}
+.list-inline li:first-child:before {
+	content: none;
+}
+
+.icon svg {
+	height: 1em;
+}
+.icon svg path {
+	fill: currentColor;
+}
+
+/* Specifics */
+
+main {
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+}
+
+footer {
+	text-align: right;
+
+	font-size: 0.75em;
+	opacity: 0.5;
+}
+footer ul {
+	margin: 0;
+}
+footer a {
+	color: inherit;
+}
+
+/* Theming */
+
+body {
+	background: rgb(255, 255, 255);
+	background: color(display-p3 1 1 1);
+	color: rgb(0, 0, 0);
+	color: color(display-p3 0 0 0);
+}
+@media (prefers-color-scheme: dark) {
+	body {
+		background: rgb(0, 0, 0);
+		background: color(display-p3 0 0 0);
+		color: rgb(255, 255, 255);
+		color: color(display-p3 1 1 1);
+	}
+}
+body.theme-light {
+	background: rgb(255, 255, 255);
+	background: color(display-p3 1 1 1);
+	color: rgb(0, 0, 0);
+	color: color(display-p3 0 0 0);
+}
+body.theme-dark {
+	background: rgb(0, 0, 0);
+	background: color(display-p3 0 0 0);
+	color: rgb(255, 255, 255);
+	color: color(display-p3 1 1 1);
+}
+
+body:not(.theme-light):not(.theme-dark) .theme-toggle-dark,
+body:not(.theme-light):not(.theme-dark) .theme-toggle-light {
+	display: none;
+}
+body.theme-light .theme-toggle-dark,
+body.theme-light .theme-toggle-system {
+	display: none;
+}
+body.theme-dark .theme-toggle-light,
+body.theme-dark .theme-toggle-system {
+	display: none;
+}
+
+/* Components */
+
+d-zone {
+	margin-left: 2rem;
+	margin-right: 2rem;
+
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+}
+d-zone:not(:last-of-type):after {
+	content: '';
+	display: block;
+
+	height: 3px;
+	width: 100%;
+	border-radius: 2px;
+
+	background: rgb(127, 127, 127);
+	background: color(display-p3 0.5 0.5 0.5);
+}
+@media (max-width: 319px) {
+	d-zone {
+		display: block;
+	}
+}
+
+/* Left container */
+d-zoneinfo {
+	flex: 1 1 0;
+
+	display: block;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+}
+
+d-zonename {
+	display: block;
+
+	font-weight: 600;
+}
+
+d-zoneoffset {
+	display: block;
+
+	font-size: 0.75em;
+	opacity: 0.5;
+}
+
+d-date {
+	display: block;
+}
+
+/* Right container */
+d-zonefigure {
+	display: block;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+	margin-left: 0.5rem;
+}
+
+d-time {
+	display: block;
+
+	font-size: 2em;
+}
+

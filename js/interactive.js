@@ -10,32 +10,25 @@ async function importDateTime() {
 
 // Zone data
 //
-// This maps an IANA zone into readable strings with bcp47. Sadly, Intl doesn't provide such strings.
+// This maps cities to IANA zones, and provides zone names
 
-async function importZoneData() {
-	const zoneData = {};
-
-	const res = await fetch("/js/bcp47timezone.json");
+async function importData() {
+	const res = await fetch("/js/data.json");
 	const data = await res.json();
-	for (const timezone of data) {
-		for (const alias of timezone.aliases) {
-			zoneData[alias] = timezone;
-		}
-	}
-
-	return zoneData;
+	// TODO: break apart the data
+	return data;
 }
 
 // Start
 
 Promise.all([
 	importDateTime(),
-	importZoneData(),
+	importData(),
 ]).then(dependencies => {
 	start(...dependencies);
 });
 
-function start(DateTime, zoneData) {
+function start(DateTime, data) {
 
 	// Datetime translation
 	//

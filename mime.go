@@ -55,8 +55,9 @@ func sortedMimes(accept string) (sorted []mime) {
 type responseType int
 
 const (
-	responsePlain responseType = iota
-	responseHTML  responseType = iota
+	responsePlain   responseType = iota
+	responseHTML    responseType = iota
+	responseUnknown responseType = iota
 )
 
 const (
@@ -79,5 +80,5 @@ func chooseResponseType(accept string) responseType {
 			return responseHTML
 		}
 	}
-	return responseHTML
+	return responseUnknown
 }
