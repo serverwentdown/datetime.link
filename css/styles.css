@@ -186,17 +186,19 @@ d-zoneinfo {
 	display: block;
 	margin-top: 1rem;
 	margin-bottom: 1rem;
+	margin-right: 0.5rem;
 }
 
 d-zonename {
-	display: block;
+	display: inline;
 
 	font-weight: 600;
 }
 
 d-zoneoffset {
-	display: block;
+	display: inline;
 
+	white-space: nowrap;
 	font-size: 0.75em;
 	opacity: 0.5;
 }
@@ -210,7 +212,6 @@ d-zonefigure {
 	display: block;
 	margin-top: 1rem;
 	margin-bottom: 1rem;
-	margin-left: 0.5rem;
 }
 
 d-time {
