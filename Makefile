@@ -17,7 +17,11 @@ clean:
 build: datetime
 
 datetime: *.go
-	$(GO) build -o datetime
+	$(GO) build -v -o datetime
+
+.PHONY: test
+test:
+	$(GO) test -v
 
 
 DATASETS = \

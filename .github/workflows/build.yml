@@ -1,0 +1,45 @@
+name: Go
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Set up Go 1.x
+      uses: actions/setup-go@v2
+      with:
+        go-version: ^1.15
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+
+    - name: Set Git user
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+
+    - name: Format code
+      run: go fmt
+
+    - name: Commit and push changes
+      id: commit-dockerfiles
+      run: |
+        git add .
+        if output=$(git status --porcelain) && [ ! -z "$output" ]; then
+          git commit -m "[Action] go fmt" -a
+          git push
+        fi
+
+    - name: Build
+      run: make
+
+    - name: Test
+      run: make test
