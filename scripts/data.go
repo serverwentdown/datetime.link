@@ -113,10 +113,3 @@ func normalizeName(name string) string {
 func splitNames(names string) []string {
 	return strings.Split(names, ",")
 }
-
-
-
-
-
-
-
