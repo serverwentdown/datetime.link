@@ -43,7 +43,7 @@ jobs:
         git config --local user.name "GitHub Action"
 
     - name: Format code
-      run: go fmt
+      run: gofmt -l -w -s .
 
     - name: Commit and push changes
       id: commit-dockerfiles

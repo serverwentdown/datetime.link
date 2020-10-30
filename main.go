@@ -80,7 +80,3 @@ func index(w http.ResponseWriter, req *http.Request) {
 }
 
 
-
-
-
-
