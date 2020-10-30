@@ -1,12 +1,13 @@
 GO = go
 
 DOWNLOAD = wget --quiet --output-document
-UNZIP = unzip
+UNZIP = unzip -d
 MKDIR = mkdir -p
 
 
 .PHONY: all
-all: download-data download-icons generate build
+all: download-icons data build
+
 .PHONY: clean
 clean:
 	$(RM) -r datetime js/data.json data/ templates/icon_*.svg
@@ -19,20 +20,21 @@ datetime: *.go
 	$(GO) build -o datetime
 
 
-.PHONY: generate
-generate: js/data.json
+DATASETS = \
+	data/cities15000.txt \
+	data/admin1CodesASCII.txt \
+	data/countryInfo.txt
 
-js/data.json: generate.go scripts/data.go
-	$(GO) generate
+.PHONY: data
+data: js/data.json
 
-
-.PHONY: download-data
-download-data: data/cities15000.txt data/countryInfo.txt data/admin1CodesASCII.txt
+js/data.json: $(DATASETS) scripts/data.go
+	$(GO) run scripts/data.go 
 
 data/cities15000.txt:
 	$(MKDIR) data/
 	$(DOWNLOAD) data/cities15000.zip http://download.geonames.org/export/dump/cities15000.zip
-	$(UNZIP) data/cities15000.zip -d data/
+	$(UNZIP) data/ data/cities15000.zip
 	$(RM) data/cities15000.zip
 
 data/countryInfo.txt:
