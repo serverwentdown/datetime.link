@@ -85,6 +85,7 @@ footer {
 
 .icon svg {
 	height: 1em;
+	vertical-align: middle;
 }
 .icon svg path {
 	fill: currentColor;
