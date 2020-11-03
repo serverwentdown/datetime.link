@@ -56,6 +56,8 @@ func index(w http.ResponseWriter, req *http.Request) {
 		templateName = "index.txt"
 	case responseHTML:
 		templateName = "index.html"
+	case responseAny:
+		templateName = "index.txt"
 	case responseUnknown:
 		w.WriteHeader(http.StatusNotAcceptable)
 		return

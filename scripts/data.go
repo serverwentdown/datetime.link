@@ -1,3 +1,13 @@
+/*
+This script reads in GeoNames data and creates a table of IDs to city names and
+timezones. The IDs are created from the ASCII city name, with administrative
+division level 1 name and country code as disambiguation. Examples of IDs are:
+
+	Singapore
+	Ashland_Oregon_US
+	Ashland_Mississippi_US
+
+*/
 package main
 
 import (
@@ -10,6 +20,29 @@ import (
 	"regexp"
 	"strings"
 )
+
+// City represents a city that belongs inside an administrative division level 1
+// and a country
+type City struct {
+	// Ref is the ASCII name of the city
+	Ref string `json:"r"`
+	// Name is the full UTF-8 name of the city
+	Name           string   `json:"n"`
+	AlternateNames []string `json:"an"`
+
+	// Admin1Ref is the ASCII name of the administrative division level 1
+	Admin1Ref  string `json:"a1r"`
+	Admin1Name string `json:"a1n"`
+
+	// CountryRef is the ISO-3166 2-letter country code
+	CountryRef  string `json:"cr"`
+	CountryName string `json:"cn"`
+}
+
+func main() {
+}
+
+/*
 
 func main() {
 	// Read CSV data
@@ -113,3 +146,4 @@ func normalizeName(name string) string {
 func splitNames(names string) []string {
 	return strings.Split(names, ",")
 }
+*/

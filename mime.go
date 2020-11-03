@@ -57,6 +57,7 @@ type responseType int
 const (
 	responsePlain   responseType = iota
 	responseHTML    responseType = iota
+	responseAny     responseType = iota
 	responseUnknown responseType = iota
 )
 
@@ -77,7 +78,7 @@ func chooseResponseType(accept string) responseType {
 			return responseHTML
 		}
 		if m.media == responseAnyMime {
-			return responseHTML
+			return responseAny
 		}
 	}
 	return responseUnknown
