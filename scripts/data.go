@@ -24,47 +24,13 @@ import (
 	"strings"
 
 	"github.com/hbollon/go-edlib"
+	"github.com/serverwentdown/datetime.link/data"
 )
 
 var regexName = regexp.MustCompile(`[^a-zA-Z1-9]+`)
 
-// Data is all the data needed to map cities to timezones
-type Data struct {
-	Cities map[string]*City
-}
-
-// City represents a city that belongs inside an administrative division level 1
-// and a country
-type City struct {
-	// Ref is the ASCII name of the city
-	Ref string `json:"-"`
-	// Name is the full UTF-8 name of the city
-	Name           string   `json:"n"`
-	AlternateNames []string `json:"an"`
-	Timezone       string   `json:"t"`
-
-	Population uint64 `json:"p"`
-
-	Admin1  Admin1  `json:"a1"`
-	Country Country `json:"c"`
-}
-
-// Admin1 represents an administrative division level 1
-type Admin1 struct {
-	// Code is the administrative division level 1 identifier, usually ISO-3166
-	Code string `json:"-"`
-	// Ref is the ASCII name of the administrative division level 1
-	Ref string `json:"-"`
-	// Name is the full UTF-8 name of the division
-	Name string `json:"n"`
-}
-
-// Country represents a country
-type Country struct {
-	// CountryRef is the ISO-3166 2-letter country code
-	Ref string `json:"-"`
-	// Name is the full UTF-8 name of the country
-	Name string `json:"n"`
+func extendRef(refs ...string) string {
+	return strings.Join(refs, "-")
 }
 
 func normalizeName(name string) string {
@@ -121,11 +87,7 @@ func limitNames(primaryName string, names []string) ([]string, error) {
 	return r, nil
 }
 
-func extendRef(refs ...string) string {
-	return strings.Join(refs, "-")
-}
-
-func readAdmin1Divisions(f string) (map[string]Admin1, error) {
+func readAdmin1Divisions(f string) (map[string]data.Admin1, error) {
 	file, err := os.Open(f)
 	if err != nil {
 		return nil, err
@@ -134,7 +96,7 @@ func readAdmin1Divisions(f string) (map[string]Admin1, error) {
 	r.Comma = '\t'
 	r.Comment = '#'
 
-	m := make(map[string]Admin1)
+	m := make(map[string]data.Admin1)
 	for {
 		record, err := r.Read()
 		if err == io.EOF {
@@ -143,7 +105,7 @@ func readAdmin1Divisions(f string) (map[string]Admin1, error) {
 		code := record[0]
 		ref := normalizeName(record[2])
 		name := record[1]
-		m[code] = Admin1{
+		m[code] = data.Admin1{
 			Code: code,
 			Ref:  ref,
 			Name: name,
@@ -153,7 +115,7 @@ func readAdmin1Divisions(f string) (map[string]Admin1, error) {
 	return m, nil
 }
 
-func readCountries(f string) (map[string]Country, error) {
+func readCountries(f string) (map[string]data.Country, error) {
 	file, err := os.Open(f)
 	if err != nil {
 		return nil, err
@@ -162,7 +124,7 @@ func readCountries(f string) (map[string]Country, error) {
 	r.Comma = '\t'
 	r.Comment = '#'
 
-	m := make(map[string]Country)
+	m := make(map[string]data.Country)
 	for {
 		record, err := r.Read()
 		if err == io.EOF {
@@ -170,7 +132,7 @@ func readCountries(f string) (map[string]Country, error) {
 		}
 		ref := record[0]
 		name := record[4]
-		m[ref] = Country{
+		m[ref] = data.Country{
 			Ref:  ref,
 			Name: name,
 		}
@@ -178,7 +140,7 @@ func readCountries(f string) (map[string]Country, error) {
 	return m, nil
 }
 
-func readCities(f string, countries map[string]Country, admin1s map[string]Admin1) (map[string]*City, error) {
+func readCities(f string, countries map[string]data.Country, admin1s map[string]data.Admin1) (map[string]*data.City, error) {
 	file, err := os.Open(f)
 	if err != nil {
 		return nil, err
@@ -187,7 +149,7 @@ func readCities(f string, countries map[string]Country, admin1s map[string]Admin
 	r.Comma = '\t'
 	r.Comment = '#'
 
-	m := make(map[string]*City)
+	m := make(map[string]*data.City)
 	for {
 		record, err := r.Read()
 		if err == io.EOF {
@@ -217,7 +179,7 @@ func readCities(f string, countries map[string]Country, admin1s map[string]Admin
 			eref = extendRef(ref, country.Ref)
 		}
 
-		c := &City{
+		c := &data.City{
 			Ref:            ref,
 			Name:           name,
 			AlternateNames: alternateNames,
@@ -241,31 +203,26 @@ func readCities(f string, countries map[string]Country, admin1s map[string]Admin
 }
 
 func main() {
-	admin1s, err := readAdmin1Divisions("../data/admin1CodesASCII.txt")
+	admin1s, err := readAdmin1Divisions("../third-party/admin1CodesASCII.txt")
 	if err != nil {
 		log.Fatalf("Reading administrative divisions level 1 failed")
 	}
-	countries, err := readCountries("../data/countryInfo.txt")
+	countries, err := readCountries("../third-party/countryInfo.txt")
 	if err != nil {
 		log.Fatalf("Reading countries failed")
 	}
-	cities, err := readCities("../data/cities15000.txt", countries, admin1s)
+	cities, err := readCities("../third-party/cities15000.txt", countries, admin1s)
 	if err != nil {
 		log.Fatalf("Reading cities failed")
 	}
 
-	// Group data
-	data := Data{
-		Cities: cities,
-	}
 	// Encode JSON file
-	//b, err := json.MarshalIndent(data, " ", " ")
-	b, err := json.Marshal(data)
+	b, err := json.Marshal(cities)
 	if err != nil {
 		log.Fatalf("Failed to encode: %v", err)
 	}
 	// Write JSON file
-	err = ioutil.WriteFile("../js/data.json", b, 0644)
+	err = ioutil.WriteFile("../data/cities.json", b, 0644)
 	if err != nil {
 		log.Fatalf("Failed to write: %v", err)
 	}

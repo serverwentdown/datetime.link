@@ -10,7 +10,7 @@ all: download-icons data build
 
 .PHONY: clean
 clean:
-	$(RM) -r datetime js/data.json data/ templates/icon_*.svg
+	$(RM) -r datetime data/cities*.json third-party/ templates/icon_*.svg
 
 
 .PHONY: build
@@ -25,29 +25,29 @@ test:
 
 
 DATASETS = \
-	data/cities15000.txt \
-	data/admin1CodesASCII.txt \
-	data/countryInfo.txt
+	third-party/cities15000.txt \
+	third-party/admin1CodesASCII.txt \
+	third-party/countryInfo.txt
 
 .PHONY: data
-data: js/data.json
+data: data/cities.json
 
-js/data.json: $(DATASETS) scripts/data.go
+data/cities.json: $(DATASETS) scripts/data.go
 	cd scripts && $(GO) run data.go
 
-data/cities15000.txt:
-	$(MKDIR) data/
-	$(DOWNLOAD) data/cities15000.zip http://download.geonames.org/export/dump/cities15000.zip
-	$(UNZIP) data/ data/cities15000.zip
-	$(RM) data/cities15000.zip
+third-party/cities15000.txt:
+	$(MKDIR) third-party/
+	$(DOWNLOAD) third-party/cities15000.zip http://download.geonames.org/export/dump/cities15000.zip
+	$(UNZIP) third-party/ third-party/cities15000.zip
+	$(RM) third-party/cities15000.zip
 
-data/countryInfo.txt:
-	$(MKDIR) data/
-	$(DOWNLOAD) data/countryInfo.txt http://download.geonames.org/export/dump/countryInfo.txt
+third-party/countryInfo.txt:
+	$(MKDIR) third-party/
+	$(DOWNLOAD) third-party/countryInfo.txt http://download.geonames.org/export/dump/countryInfo.txt
 
-data/admin1CodesASCII.txt:
-	$(MKDIR) data/
-	$(DOWNLOAD) data/admin1CodesASCII.txt https://download.geonames.org/export/dump/admin1CodesASCII.txt
+third-party/admin1CodesASCII.txt:
+	$(MKDIR) third-party/
+	$(DOWNLOAD) third-party/admin1CodesASCII.txt https://download.geonames.org/export/dump/admin1CodesASCII.txt
 
 
 ICONS = \

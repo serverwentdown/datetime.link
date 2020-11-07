@@ -1,4 +1,5 @@
 datetime*
-data.json
-data/
+
 templates/icon_*.svg
+third-party/
+data/cities*.json
