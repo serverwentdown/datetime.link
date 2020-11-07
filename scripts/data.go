@@ -3,9 +3,10 @@ This script reads in GeoNames data and creates a table of IDs to city names and
 timezones. The IDs are created from the ASCII city name, with administrative
 division level 1 name and country code as disambiguation. Examples of IDs are:
 
-	Singapore
-	Ashland_Oregon_US
-	Ashland_Mississippi_US
+	Singapore-SG
+	Ban_Bueng-Chon_Buri-TH
+	Ashland-Oregon-US
+	Ashland-California-US
 
 */
 package main
@@ -18,7 +19,10 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"sort"
 	"strings"
+
+	"github.com/hbollon/go-edlib"
 )
 
 var regexName = regexp.MustCompile(`[^a-zA-Z1-9]+`)
@@ -68,6 +72,50 @@ func normalizeName(name string) string {
 
 func splitNames(names string) []string {
 	return strings.Split(names, ",")
+}
+
+type stringLengthSort []string
+
+func (p stringLengthSort) Len() int           { return len(p) }
+func (p stringLengthSort) Less(i, j int) bool { return len(p[i]) > len(p[j]) }
+func (p stringLengthSort) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
+
+func limitNames(primaryName string, names []string) []string {
+	sort.Sort(stringLengthSort(names))
+	r := make([]string, 0, len(names))
+	for _, n := range names {
+		if n == primaryName || len(n) <= 0 {
+			continue
+		}
+		// Skip abbreviation-like names
+		if strings.ToUpper(n) == n {
+			continue
+		}
+		// Skip almost the same names
+		res, err := edlib.FuzzySearchThreshold(n, r, 0.82, edlib.Levenshtein)
+		if err != nil {
+			log.Fatalf("Error doing fuzzy search: %v", err)
+		}
+		if len(res) != 0 {
+			continue
+		}
+		// Skip substrings
+		skipSubstr := false
+		for _, longer := range r {
+			if strings.HasPrefix(longer, n) {
+				skipSubstr = true
+			}
+		}
+		if skipSubstr {
+			continue
+		}
+		// Limit
+		if len(r) > 10 {
+			break
+		}
+		r = append(r, n)
+	}
+	return r
 }
 
 func extendRef(refs ...string) string {
@@ -144,7 +192,7 @@ func readCities(f string, countries map[string]Country, admin1s map[string]Admin
 		}
 		name := record[1]
 		ref := normalizeName(record[2])
-		alternateNames := splitNames(record[3])
+		alternateNames := limitNames(name, splitNames(record[3]))
 		admin1Code := record[10]
 		countryRef := record[8]
 		timezone := record[17]
@@ -155,22 +203,9 @@ func readCities(f string, countries map[string]Country, admin1s map[string]Admin
 
 		// Bulid a full formed ID
 		eref := extendRef(ref, admin1.Ref, country.Ref)
-		/*
-			if ref == admin1.Ref {
-				eref = extendRef(ref, country.Ref)
-			}
-			if admin1.Ref == country.Name {
-				eref = extendRef(ref, country.Ref)
-			}
-		*/
 		if len(admin1.Ref) <= 0 {
 			eref = extendRef(ref, country.Ref)
 		}
-		/*
-			if ref == country.Name && len(admin1.Ref) <= 0 {
-				eref = extendRef(ref)
-			}
-		*/
 
 		c := &City{
 			Ref:            ref,
@@ -183,7 +218,7 @@ func readCities(f string, countries map[string]Country, admin1s map[string]Admin
 
 		// Warn if there exists a similar city
 		if e, ok := m[eref]; ok {
-			if !(e.Ref == c.Ref && e.Name == c.Name && e.Admin1.Ref == c.Admin1.Ref && e.Country.Ref == e.Country.Ref) {
+			if !(e.Ref == c.Ref && e.Admin1.Ref == c.Admin1.Ref && e.Country.Ref == e.Country.Ref) {
 
 				log.Printf("WARNING: existing city %s: %v %v", eref, c, e)
 			}
@@ -203,7 +238,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Reading countries failed")
 	}
-	cities, err := readCities("../data/cities15000.txt", countries, admin1s)
+	cities, err := readCities("../data/cities5000.txt", countries, admin1s)
 	if err != nil {
 		log.Fatalf("Reading cities failed")
 	}
@@ -213,7 +248,8 @@ func main() {
 		Cities: cities,
 	}
 	// Encode JSON file
-	b, err := json.MarshalIndent(data, " ", " ")
+	//b, err := json.MarshalIndent(data, " ", " ")
+	b, err := json.Marshal(data)
 	if err != nil {
 		log.Fatalf("Failed to encode: %v", err)
 	}
