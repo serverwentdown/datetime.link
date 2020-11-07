@@ -6,11 +6,11 @@ MKDIR = mkdir -p
 
 
 .PHONY: all
-all: download-icons data build
+all: download-icons download-libs data build
 
 .PHONY: clean
 clean:
-	$(RM) -r datetime data/cities*.json third-party/ templates/icon_*.svg
+	$(RM) -r datetime data/cities*.json third-party/ assets/js/third-party/ templates/icon_*.svg
 
 
 .PHONY: build
@@ -48,6 +48,13 @@ third-party/countryInfo.txt:
 third-party/admin1CodesASCII.txt:
 	$(MKDIR) third-party/
 	$(DOWNLOAD) third-party/admin1CodesASCII.txt https://download.geonames.org/export/dump/admin1CodesASCII.txt
+
+.PHONY: download-libs
+download-libs: assets/js/third-party/luxon.min.js
+
+assets/js/third-party/luxon.min.js:
+	$(MKDIR) assets/js/third-party/
+	$(DOWNLOAD) assets/js/third-party/luxon.min.js https://cdn.jsdelivr.net/npm/luxon@1.25.0/build/global/luxon.min.js
 
 
 ICONS = \

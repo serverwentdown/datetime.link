@@ -1,5 +1,4 @@
 datetime*
 
 templates/icon_*.svg
-third-party/
 data/cities*.json
