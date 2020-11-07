@@ -33,7 +33,7 @@ DATASETS = \
 data: js/data.json
 
 js/data.json: $(DATASETS) scripts/data.go
-	$(GO) run scripts/data.go 
+	cd scripts && $(GO) run data.go
 
 data/cities15000.txt:
 	$(MKDIR) data/
