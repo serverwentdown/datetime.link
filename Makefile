@@ -25,7 +25,7 @@ test:
 
 
 DATASETS = \
-	data/cities5000.txt \
+	data/cities15000.txt \
 	data/admin1CodesASCII.txt \
 	data/countryInfo.txt
 
@@ -35,11 +35,11 @@ data: js/data.json
 js/data.json: $(DATASETS) scripts/data.go
 	cd scripts && $(GO) run data.go
 
-data/cities5000.txt:
+data/cities15000.txt:
 	$(MKDIR) data/
-	$(DOWNLOAD) data/cities5000.zip http://download.geonames.org/export/dump/cities5000.zip
-	$(UNZIP) data/ data/cities5000.zip
-	$(RM) data/cities5000.zip
+	$(DOWNLOAD) data/cities15000.zip http://download.geonames.org/export/dump/cities15000.zip
+	$(UNZIP) data/ data/cities15000.zip
+	$(RM) data/cities15000.zip
 
 data/countryInfo.txt:
 	$(MKDIR) data/

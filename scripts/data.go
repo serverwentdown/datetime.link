@@ -20,6 +20,7 @@ import (
 	"os"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/hbollon/go-edlib"
@@ -41,6 +42,8 @@ type City struct {
 	Name           string   `json:"n"`
 	AlternateNames []string `json:"an"`
 	Timezone       string   `json:"t"`
+
+	Population uint64 `json:"p"`
 
 	Admin1  Admin1  `json:"a1"`
 	Country Country `json:"c"`
@@ -80,7 +83,7 @@ func (p stringLengthSort) Len() int           { return len(p) }
 func (p stringLengthSort) Less(i, j int) bool { return len(p[i]) > len(p[j]) }
 func (p stringLengthSort) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 
-func limitNames(primaryName string, names []string) []string {
+func limitNames(primaryName string, names []string) ([]string, error) {
 	sort.Sort(stringLengthSort(names))
 	r := make([]string, 0, len(names))
 	for _, n := range names {
@@ -94,7 +97,7 @@ func limitNames(primaryName string, names []string) []string {
 		// Skip almost the same names
 		res, err := edlib.FuzzySearchThreshold(n, r, 0.82, edlib.Levenshtein)
 		if err != nil {
-			log.Fatalf("Error doing fuzzy search: %v", err)
+			return nil, err
 		}
 		if len(res) != 0 {
 			continue
@@ -115,7 +118,7 @@ func limitNames(primaryName string, names []string) []string {
 		}
 		r = append(r, n)
 	}
-	return r
+	return r, nil
 }
 
 func extendRef(refs ...string) string {
@@ -192,9 +195,16 @@ func readCities(f string, countries map[string]Country, admin1s map[string]Admin
 		}
 		name := record[1]
 		ref := normalizeName(record[2])
-		alternateNames := limitNames(name, splitNames(record[3]))
+		alternateNames, err := limitNames(name, splitNames(record[3]))
+		if err != nil {
+			return nil, err
+		}
 		admin1Code := record[10]
 		countryRef := record[8]
+		population, err := strconv.ParseUint(record[14], 10, 64)
+		if err != nil {
+			return nil, err
+		}
 		timezone := record[17]
 
 		// Resolve Country and Admin1
@@ -212,6 +222,7 @@ func readCities(f string, countries map[string]Country, admin1s map[string]Admin
 			Name:           name,
 			AlternateNames: alternateNames,
 			Timezone:       timezone,
+			Population:     population,
 			Admin1:         admin1,
 			Country:        country,
 		}
@@ -238,7 +249,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Reading countries failed")
 	}
-	cities, err := readCities("../data/cities5000.txt", countries, admin1s)
+	cities, err := readCities("../data/cities15000.txt", countries, admin1s)
 	if err != nil {
 		log.Fatalf("Reading cities failed")
 	}
