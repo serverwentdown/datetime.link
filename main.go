@@ -28,10 +28,10 @@ func main() {
 		panic(err)
 	}
 
+	http.Handle("/data/", http.FileServer(http.Dir(".")))
 	http.Handle("/js/", http.FileServer(http.Dir("assets")))
 	http.Handle("/css/", http.FileServer(http.Dir("assets")))
 	http.Handle("/favicon.ico", http.FileServer(http.Dir("assets")))
-	http.Handle("/data", http.FileServer(http.Dir("data")))
 	http.HandleFunc("/", index)
 
 	log.Printf("Listening on %v", server.Addr)
