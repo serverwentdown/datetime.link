@@ -54,7 +54,7 @@ jobs:
 
     - name: Restart
       run: |
-        ssh -p 26779 datetime@pricklypear.cacti.makerforce.io "podman stop datetime; podman rm datetime; podman run --detach --publish 127.0.0.1:4513:8000 --name datetime ghcr.io/serverwentdown/datetime:latest"
+        ssh -p 26779 datetime@pricklypear.cacti.makerforce.io "systemctl restart --user container-datetime.service"
 
 
 # vim: set et ts=2 sw=2:
