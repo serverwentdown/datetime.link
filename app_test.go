@@ -9,7 +9,7 @@ import (
 func TestChooseTemplate(t *testing.T) {
 	tmpl, err := template.ParseGlob("templates/*")
 	if err != nil {
-		t.Errorf("unable to load templates: %v", err)
+		panic(err)
 	}
 	app := &Datetime{tmpl: tmpl}
 

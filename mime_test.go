@@ -11,6 +11,10 @@ func TestChooseResponseType(t *testing.T) {
 	}
 	r = chooseResponseType("application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3")
 	if r != responseAny {
+		t.Errorf("expecting any, got %v", r)
+	}
+	r = chooseResponseType("text/plain;q=,text/html")
+	if r != responseHTML {
 		t.Errorf("expecting html, got %v", r)
 	}
 }

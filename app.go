@@ -16,7 +16,7 @@ type Datetime struct {
 }
 
 // NewDatetime creates an application instance. It assumes certain resources
-// like templates and data exist.
+// like templates and data exist
 func NewDatetime() (*Datetime, error) {
 	// Data
 	tmpl, err := template.ParseGlob("templates/*")
