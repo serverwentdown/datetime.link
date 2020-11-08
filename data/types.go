@@ -1,11 +1,6 @@
 package data
 
-// Data is all the data needed to map cities to timezones
-type Data struct {
-	Cities map[string]*City
-}
-
-// City represents a city that belongs inside an administrative division level 1
+// city represents a city that belongs inside an administrative division level 1
 // and a country
 type City struct {
 	// Ref is the ASCII name of the city

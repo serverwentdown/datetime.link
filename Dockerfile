@@ -6,7 +6,7 @@ RUN apk add \
 WORKDIR /go/src/app
 COPY . .
 
-RUN make
+RUN make TAGS=production
 
 
 FROM alpine:3.12

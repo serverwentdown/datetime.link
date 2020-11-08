@@ -17,7 +17,7 @@ clean:
 build: datetime
 
 datetime: *.go
-	$(GO) build -v -o datetime
+	$(GO) build -tags "$(TAGS)" -v -o datetime
 
 .PHONY: test
 test:

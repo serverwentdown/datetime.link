@@ -2,83 +2,47 @@ package main
 
 import (
 	"flag"
-	"html/template"
 	"log"
 	"net/http"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 var listen string
-var tmpl *template.Template
+var l *zap.Logger
 
 func main() {
 	var err error
 
 	flag.StringVar(&listen, "listen", ":8000", "Listen address")
+	level := zap.LevelFlag("log", zap.InfoLevel, "zap logging level")
 	flag.Parse()
 
-	server := &http.Server{
-		Addr:         listen,
-		ReadTimeout:  5 * time.Second,
-		WriteTimeout: 5 * time.Second,
-	}
-
-	tmpl, err = template.ParseGlob("templates/*")
+	config := zapConfig()
+	config.Level = zap.NewAtomicLevelAt(*level)
+	l, err = config.Build()
 	if err != nil {
-		panic(err)
+		log.Fatalf("failed to initialize zap logger: %v", err)
+	}
+	defer l.Sync()
+
+	app, err := NewDatetime()
+	if err != nil {
+		l.Panic("failed to create datetime", zap.Error(err))
 	}
 
-	http.Handle("/data/", http.FileServer(http.Dir(".")))
-	http.Handle("/js/", http.FileServer(http.Dir("assets")))
-	http.Handle("/css/", http.FileServer(http.Dir("assets")))
-	http.Handle("/favicon.ico", http.FileServer(http.Dir("assets")))
-	http.HandleFunc("/", index)
+	server := &http.Server{
+		Addr:           listen,
+		Handler:        app,
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   10 * time.Second,
+		MaxHeaderBytes: 1 << 20,
+	}
 
-	log.Printf("Listening on %v", server.Addr)
+	l.Info("server is listening", zap.String("addr", listen))
 	err = server.ListenAndServe()
 	if err != nil {
-		panic(err)
-	}
-}
-
-func index(w http.ResponseWriter, req *http.Request) {
-	var err error
-
-	if req.Method != http.MethodGet && req.Method != http.MethodHead {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		return
-	}
-
-	accept := req.Header.Get("Accept")
-	responseType := chooseResponseType(accept)
-
-	templateName := ""
-	switch responseType {
-	case responsePlain:
-		templateName = "index.txt"
-	case responseHTML:
-		templateName = "index.html"
-	case responseAny:
-		templateName = "index.txt"
-	case responseUnknown:
-		w.WriteHeader(http.StatusNotAcceptable)
-		return
-	}
-
-	t := tmpl.Lookup(templateName)
-	if t == nil {
-		log.Printf("Unable to find index template")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	if req.Method == http.MethodHead {
-		return
-	}
-	err = t.Execute(w, nil)
-	if err != nil {
-		log.Printf("Error: %v", err)
-		// Usually, the following will fail
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+		l.Panic("server failed", zap.Error(err))
 	}
 }
