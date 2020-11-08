@@ -20,7 +20,7 @@ datetime: *.go
 	$(GO) build -tags "$(TAGS)" -v -o datetime
 
 .PHONY: test
-test:
+test: data
 	$(GO) test -cover -bench=. -v
 
 
