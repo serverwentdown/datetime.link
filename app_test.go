@@ -19,10 +19,10 @@ func TestChooseTemplate(t *testing.T) {
 		template   string
 	}
 	tests := []chooseTest{
-		chooseTest{"text/html", true, "index.html"},
-		chooseTest{"text/html;q=0.9,text/plain", true, "index.txt"},
-		chooseTest{"image/png", false, ""},
-		chooseTest{"*/*", true, "index.txt"},
+		{"text/html", true, "index.html"},
+		{"text/html;q=0.9,text/plain", true, "index.txt"},
+		{"image/png", false, ""},
+		{"*/*", true, "index.txt"},
 	}
 
 	for _, test := range tests {
