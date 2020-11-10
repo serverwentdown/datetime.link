@@ -15,10 +15,11 @@
 		{{$t := .Req.Time}}
 		{{range .Req.Zones}}
 			<d-zone zone="{{.}}">
+				{{$zoneName := .}}
 				{{with resolveZone $app .}}
 					{{if .Error}}
 						<d-zoneerror>
-							Unable to load zone. The URL path might not be valid
+							Unable to load zone "{{$zoneName}}". The URL path might not be valid
 						</d-zoneerror>
 					{{else}}
 						{{$zt := $t.In .Location}}
