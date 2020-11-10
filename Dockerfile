@@ -11,6 +11,9 @@ RUN make TAGS=production
 
 FROM alpine:3.12
 
+RUN apk add --no-cache \
+	tzdata
+
 WORKDIR /app
 COPY --from=build /go/src/app/assets assets
 COPY --from=build /go/src/app/templates templates
