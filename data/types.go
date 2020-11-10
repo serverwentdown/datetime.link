@@ -1,6 +1,6 @@
 package data
 
-// city represents a city that belongs inside an administrative division level 1
+// City represents a city that belongs inside an administrative division level 1
 // and a country
 type City struct {
 	// Ref is the ASCII name of the city

@@ -1,12 +1,16 @@
 package main
 
 import (
+	"errors"
 	"html/template"
 	"net/http"
 
 	"github.com/serverwentdown/datetime.link/data"
 	"go.uber.org/zap"
 )
+
+// ErrNoTemplate is returned when a template was not found on the server
+var ErrNoTemplate = errors.New("missing template")
 
 // Datetime is the main application server
 type Datetime struct {
@@ -19,7 +23,7 @@ type Datetime struct {
 // like templates and data exist
 func NewDatetime() (*Datetime, error) {
 	// Data
-	tmpl, err := template.ParseGlob("templates/*")
+	tmpl, err := template.New("templates").Funcs(templateFuncs).ParseGlob("templates/*")
 	if err != nil {
 		return nil, err
 	}
@@ -42,6 +46,11 @@ func NewDatetime() (*Datetime, error) {
 	return app, nil
 }
 
+type appRequest struct {
+	App Datetime
+	Req Request
+}
+
 // index handles all incoming page requests
 func (app Datetime) index(w http.ResponseWriter, req *http.Request) {
 	var err error
@@ -51,45 +60,29 @@ func (app Datetime) index(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	accept := req.Header.Get("Accept")
-	tmpl, acceptable := app.chooseTemplate(accept)
-	if !acceptable {
-		w.WriteHeader(http.StatusNotAcceptable)
-		return
-	}
+	tmpl := app.loadTemplate("index", w, req)
 	if tmpl == nil {
-		l.Error("unable to find template", zap.String("accept", accept))
-		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-
 	if req.Method == http.MethodHead {
 		return
 	}
 
-	l.Debug("", zap.Reflect("url", req.URL))
-	err = tmpl.Execute(w, nil)
+	request := Request{}
+	if req.URL.Path != "/" {
+		request, err = ParseRequest(req.URL)
+		if err != nil {
+			l.Debug("parse failed", zap.Error(err))
+			app.error(HTTPError{http.StatusBadRequest, err}, w, req)
+			return
+		}
+	}
+
+	l.Debug("rendering template", zap.Reflect("request", request))
+	err = tmpl.Execute(w, appRequest{app, request})
 	if err != nil {
 		l.Error("templating failed", zap.Error(err))
-		w.WriteHeader(http.StatusInternalServerError) // Usually this will fail
+		app.templateError(HTTPError{http.StatusInternalServerError, err}, w, req)
 		return
 	}
-}
-
-// chooseTemplate returns a template based on the accepted mime types from the
-// client, and if a template cannot be found it returns a nil template.
-func (app Datetime) chooseTemplate(accept string) (t *template.Template, acceptable bool) {
-	responseType := chooseResponseType(accept)
-	templateName := ""
-	switch responseType {
-	case responsePlain:
-		templateName = "index.txt"
-	case responseHTML:
-		templateName = "index.html"
-	case responseAny:
-		templateName = "index.txt"
-	case responseUnknown:
-		return nil, false
-	}
-	return app.tmpl.Lookup(templateName), true
 }

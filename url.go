@@ -2,16 +2,20 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"net/url"
 	"strings"
 	"time"
 )
 
 // ErrMissingComponent is thrown when the URL has empty or missing components
-var ErrMissingComponent = errors.New("missing URL component")
+var ErrMissingComponent = errors.New("missing path component")
 
 // ErrTooManyComponent is thrown when there are more than 2 components
-var ErrTooManyComponent = errors.New("too many components")
+var ErrTooManyComponent = errors.New("too many path components")
+
+// ErrInvalidTime is thrown in a time.ParseError
+var ErrInvalidTime = errors.New("invalid ISO 8601 time")
 
 var timeRFC3339NoSec = "2006-01-02T15:04Z07:00"
 var timeFormats = []string{time.RFC3339, timeRFC3339NoSec}
@@ -47,7 +51,7 @@ func ParseRequest(u *url.URL) (Request, error) {
 		}
 	}
 	if err != nil {
-		return Request{}, err
+		return Request{}, fmt.Errorf("%w: %v", ErrInvalidTime, err)
 	}
 
 	// Split zones

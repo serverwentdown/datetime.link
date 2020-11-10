@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>{{.Status | statusText}} - datetime.link</title>
+	<meta name="viewport" content="width=device-width">
+	
+	{{template "resources.html"}}
+</head>
+<body>
+	{{template "resources-body.html"}}
+
+	<main id="app">
+		<h1 title="Status Code: {{.Status}}">{{.Status | statusText}}</h1>
+		{{if eq .Status 400}}
+		<p title="Error: {{.Error.Error}}">The URL path is not valid</p>
+		{{else}}
+		<p>{{.Error.Error}}</p>
+		{{end}}
+	</main>
+
+	{{template "footer.html"}}
+</body>
+</html>
+

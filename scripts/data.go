@@ -27,7 +27,7 @@ import (
 	"github.com/serverwentdown/datetime.link/data"
 )
 
-var regexName = regexp.MustCompile(`[^a-zA-Z1-9]+`)
+var regexName = regexp.MustCompile(`[^a-zA-Z1-9']+`)
 
 func extendRef(refs ...string) string {
 	return strings.Join(refs, "-")

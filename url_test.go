@@ -25,7 +25,7 @@ func TestURLParse(t *testing.T) {
 		return
 	}
 	want := Request{
-		time.Date(2020, 6, 2, 14, 0, 0, 0, time.FixedZone("UTC +8", 8*60*60)),
+		time.Date(2020, time.June, 2, 14, 0, 0, 0, time.FixedZone("UTC +8", 8*60*60)),
 		[]string{"Singapore", "Malaysia"},
 	}
 	if !cmp.Equal(got, want) {
@@ -39,7 +39,7 @@ func TestURLParse(t *testing.T) {
 		return
 	}
 	want = Request{
-		time.Date(2019, 4, 30, 18, 0, 0, 0, time.FixedZone("UTC", 0)),
+		time.Date(2019, time.April, 30, 18, 0, 0, 0, time.FixedZone("UTC", 0)),
 		[]string{"Nowhere"},
 	}
 	if !cmp.Equal(got, want) {
@@ -74,15 +74,13 @@ func TestURLParseFail(t *testing.T) {
 
 	u = mustURLParse("http://test/2000-01-13T00:00Z08:00/hi")
 	_, err = ParseRequest(u)
-	_, isParseError := err.(*time.ParseError)
-	if !isParseError {
-		t.Errorf("got error %v, want time.ParseError", err)
+	if !errors.Is(err, ErrInvalidTime) {
+		t.Errorf("got error %v, want error %v", err, ErrInvalidTime)
 	}
 
 	u = mustURLParse("http://test/2000-01-13 00:00+08:00/hi")
 	_, err = ParseRequest(u)
-	_, isParseError = err.(*time.ParseError)
-	if !isParseError {
-		t.Errorf("got error %v, want time.ParseError", err)
+	if !errors.Is(err, ErrInvalidTime) {
+		t.Errorf("got error %v, want error %v", err, ErrInvalidTime)
 	}
 }

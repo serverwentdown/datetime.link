@@ -4,13 +4,38 @@
 	<meta charset="utf-8">
 	<title>datetime.link</title>
 	<meta name="viewport" content="width=device-width">
-	
-	<link rel="stylesheet" href="https://rsms.me/inter/inter.css">
-	<link rel="stylesheet" href="/css/styles.css">
+
+	{{template "resources.html"}}
 </head>
 <body>
-	<script src="/js/theme.js"></script>
+	{{template "resources-body.html"}}
+
 	<main id="app">
+		{{$app := .App}}
+		{{$t := .Req.Time}}
+		{{range .Req.Zones}}
+			<d-zone zone="{{.}}">
+				{{with resolveZone $app .}}
+					{{if .Error}}
+						<d-zoneerror>
+							Unable to load zone. The URL path might not be valid
+						</d-zoneerror>
+					{{else}}
+						{{$zt := $t.In .Location}}
+						<d-zoneinfo>
+							<d-zonename>{{.Name}}</d-zonename>
+							{{if not .IsOffset}}
+								<d-zoneoffset>{{.TimeOffset $t | formatOffset}}</d-zoneoffset>
+							{{end}}
+							<d-date date="{{$zt.Format "2006-01-02"}}">{{$zt.Format "2006-01-02"}}</d-date>
+						</d-zoneinfo>
+						<d-zonefigure>
+							<d-time time="{{$zt.Format "15:04"}}">{{$zt.Format "15:04"}}</d-time>
+						</d-zonefigure>
+					{{end}}
+				{{end}}
+			</d-zone>
+		{{end}}
 		<!--
 		<d-zone>
 			<d-zoneinfo>
@@ -45,17 +70,7 @@
 		-->
 	</main>
 
-	<footer>
-		<ul class="list-inline">
-			<li><a href="https://github.com/serverwentdown/datetime.link" target="_blank">About datetime.link</a></li><!--
-			--><li><a href="https://github.com/serverwentdown/datetime.link/issues/new" target="_blank">Found a bug?</a></li><!--
-			--><li onclick="toggleTheme()"><!--
-				--><span class="icon theme-toggle-system">{{template "icon_solid_adjust.svg"}}</span><span class="theme-toggle-name theme-toggle-system">&nbsp;System theme</span><!--
-				--><span class="icon theme-toggle-dark">{{template "icon_solid_moon.svg"}}</span><span class="theme-toggle-name theme-toggle-dark">&nbsp;Dark theme</span><!--
-				--><span class="icon theme-toggle-light">{{template "icon_solid_sun.svg"}}</span><span class="theme-toggle-name theme-toggle-light">&nbsp;Light theme</span><!--
-			--></li>
-		</ul>
-	</footer>
+	{{template "footer.html"}}
 
 	<!-- Work in progress...
 	<script src="/js/third-party/luxon.min.js"></script>
