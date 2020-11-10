@@ -5,7 +5,7 @@
 html {
 	font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; 
 	font-feature-settings: "case", "tnum", "ss03", "cv09", "cv08", "cv10", "cv11";
-	line-height: 1.5;
+	line-height: 1.4;
 }
 @supports (font-variation-settings: normal) {
 	html {
@@ -204,22 +204,25 @@ d-zoneinfo {
 
 d-zonename {
 	display: inline;
-
-	font-size: 0.75em;
-	font-weight: 600;
 }
 
 d-zoneoffset {
 	display: inline;
 
 	white-space: nowrap;
-	font-size: 0.75em;
 	opacity: 0.5;
+}
+@media (max-width: 675px) {
+	d-zoneoffset {
+		display: block;
+	}
 }
 
 d-date {
-	margin-top: 0.25em;
 	display: block;
+	margin-top: 0.25em;
+
+	font-size: 1.2em;
 }
 
 /* Right container */

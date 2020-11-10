@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 // ErrZoneOffsetInvalid is thrown when a zone string is an invalid zone offset
@@ -13,7 +14,7 @@ var ErrZoneOffsetInvalid = errors.New("offset zone invalid")
 const zoneHour = 60 * 60
 const zoneMinute = 60
 
-var zoneOffsetRegexp = regexp.MustCompile(`^[+-][0-9]{2}:[0-9]{2}$`)
+var zoneOffsetRegexp = regexp.MustCompile("^[+-\u2212][0-9]{2}:[0-9]{2}$")
 
 // ParseZoneOffset parses a zone string into an offset
 func ParseZoneOffset(zone string) (int, error) {
@@ -23,15 +24,17 @@ func ParseZoneOffset(zone string) (int, error) {
 	// Assume that if it satisfies the regex, it satisfies the length and won't
 	// fail to parse
 	d := 0
-	if zone[0] == '+' {
+	if strings.HasPrefix(zone, "+") {
 		d = 1
 	}
-	if zone[0] == '-' {
+	if strings.HasPrefix(zone, "-") || strings.HasPrefix(zone, "\u2212") {
 		d = -1
 	}
-	h, _ := strconv.ParseUint(zone[1:1+2], 10, 64)
+	zone = strings.TrimLeft(zone, "+-\u2212")
+	parts := strings.Split(zone, ":")
+	h, _ := strconv.ParseUint(parts[0], 10, 64)
 	// Allow hour offsets greater that 24
-	m, _ := strconv.ParseUint(zone[1+3:1+3+2], 10, 64)
+	m, _ := strconv.ParseUint(parts[1], 10, 64)
 	if m >= 60 {
 		return 0, ErrZoneOffsetInvalid
 	}
@@ -44,11 +47,11 @@ func FormatZoneOffset(offset int) string {
 	neg := offset < 0
 	s := '+'
 	if neg {
-		s = '-'
+		s = '\u2212'
 		offset = -offset
 	}
 	if offset == 0 {
-		return "\u00B100:00"
+		return "\u00b100:00"
 	}
 	h := offset / zoneHour
 	m := (offset % zoneHour) / zoneMinute

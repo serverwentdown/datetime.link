@@ -26,6 +26,16 @@ func TestParseZoneOffset(t *testing.T) {
 		}
 	}
 
+	offset, err = ParseZoneOffset("\u221251:59")
+	if err != nil {
+		t.Errorf("want error %v, got error %v", nil, err)
+	} else {
+		want := -(51*60*60 + 59*60)
+		if offset != want {
+			t.Errorf("got %d, want %d", offset, want)
+		}
+	}
+
 	_, err = ParseZoneOffset("-0030")
 	if err != ErrZoneOffsetInvalid {
 		t.Errorf("want error %v, got error %v", ErrZoneOffsetInvalid, err)
@@ -77,7 +87,7 @@ func TestFormatZoneOffset(t *testing.T) {
 		t.Fatalf("got offset %v, want offset %v", got, want)
 	}
 
-	want, got = "-12:15", FormatZoneOffset(-(12*60*60 + 15*60))
+	want, got = "\u221212:15", FormatZoneOffset(-(12*60*60 + 15*60))
 	if want != got {
 		t.Fatalf("got offset %v, want offset %v", got, want)
 	}
