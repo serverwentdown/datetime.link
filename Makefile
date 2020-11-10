@@ -32,7 +32,7 @@ DATASETS = \
 .PHONY: data
 data: data/cities.json
 
-data/cities.json: $(DATASETS) scripts/data.go
+data/cities.json: $(DATASETS) scripts/data.go data/*.go
 	cd scripts && $(GO) run data.go
 
 third-party/cities15000.txt:

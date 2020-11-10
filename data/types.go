@@ -29,7 +29,7 @@ type Admin1 struct {
 // Country represents a country
 type Country struct {
 	// CountryRef is the ISO-3166 2-letter country code
-	Ref string `json:"-"`
+	Ref string `json:"r"`
 	// Name is the full UTF-8 name of the country
 	Name string `json:"n"`
 }
