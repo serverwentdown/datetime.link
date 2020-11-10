@@ -24,7 +24,16 @@
 					{{else}}
 						{{$zt := $t.In .Location}}
 						<d-zoneinfo>
-							<d-zonename>{{.Name}}</d-zonename>
+							{{if not .IsOffset}}
+							<d-zonename>
+								<d-zonearea>{{.FirstName}},</d-zonearea>
+								<d-zonecountry>&nbsp;{{.City.Country.Ref}}</d-zonecountry>
+							</d-zonename>
+							{{else}}
+							<d-zonename>
+								{{.Name}}
+							</d-zonename>
+							{{end}}
 							{{if not .IsOffset}}
 								<d-zoneoffset>{{.TimeOffset $t | formatOffset}}</d-zoneoffset>
 							{{end}}
@@ -37,38 +46,6 @@
 				{{end}}
 			</d-zone>
 		{{end}}
-		<!--
-		<d-zone>
-			<d-zoneinfo>
-				<d-zonename>India Standard Time</d-zonename>
-				<d-zoneoffset>+5:30</d-zoneoffset>
-				<d-date date="2020-06-02">2020-06-02</d-date>
-			</d-zoneinfo>
-			<d-zonefigure>
-				<d-time time="14:00">14:00</d-time>
-			</d-zonefigure>
-		</d-zone>
-		<d-zone>
-			<d-zoneinfo>
-				<d-zonename>Singapore Time</d-zonename>
-				<d-zoneoffset>+8:00</d-zoneoffset>
-				<d-date date="2020-06-02">2020-06-02</d-date>
-			</d-zoneinfo>
-			<d-zonefigure>
-				<d-time time="16:30">16:30</d-time>
-			</d-zonefigure>
-		</d-zone>
-		<d-zone>
-			<d-zoneinfo>
-				<d-zonename>New York, USA</d-zonename>
-				<d-zoneoffset>-4:00</d-zoneoffset>
-				<d-date date="2020-06-02">2020-06-02</d-date>
-			</d-zoneinfo>
-			<d-zonefigure>
-				<d-time time="04:30">04:30</d-time>
-			</d-zonefigure>
-		</d-zone>
-		-->
 	</main>
 
 	{{template "footer.html"}}

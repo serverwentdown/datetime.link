@@ -31,6 +31,19 @@ func (z Zone) Name() string {
 	return ""
 }
 
+// FirstName returns the primary name of the zone
+func (z Zone) FirstName() string {
+	if z.IsOffset() {
+		return z.Offset.String()
+	} else if z.City != nil {
+		if len(z.City.Admin1.Name) > 0 {
+			return z.City.Name + ", " + z.City.Admin1.Name
+		}
+		return z.City.Name
+	}
+	return ""
+}
+
 // Location returns the time.Location of the zone. Useful for other functions
 func (z Zone) Location() *time.Location {
 	if z.IsOffset() {
