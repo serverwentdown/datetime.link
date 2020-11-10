@@ -209,7 +209,7 @@ d-zoneinfo {
 	display: block;
 	margin-top: 1rem;
 	margin-bottom: 1rem;
-	margin-right: 0.5rem;
+	margin-right: 1rem;
 }
 @media (max-width: 319px) {
 	d-zoneinfo {
