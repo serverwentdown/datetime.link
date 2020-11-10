@@ -205,6 +205,7 @@ d-zoneinfo {
 d-zonename {
 	display: inline;
 
+	font-size: 0.75em;
 	font-weight: 600;
 }
 

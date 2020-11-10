@@ -29,7 +29,7 @@ func extendName(names ...string) string {
 // FullName returns a fully qualified human readable name
 func (c City) FullName() string {
 	if len(c.Admin1.Name) > 0 {
-		return extendName(c.Name, c.Admin1.Name, c.Country.Name)
+		return extendName(c.Name, c.Admin1.Name, c.Country.Ref)
 	}
-	return extendName(c.Name, c.Country.Name)
+	return extendName(c.Name, c.Country.Ref)
 }

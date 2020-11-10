@@ -21,7 +21,7 @@ datetime: *.go data/*.go
 
 .PHONY: test
 test: data
-	$(GO) test -cover -bench=. -v
+	$(GO) test -cover -bench=. -v ./...
 
 
 DATASETS = \
