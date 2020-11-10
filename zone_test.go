@@ -83,6 +83,48 @@ func TestSearchCities(t *testing.T) {
 	}
 }
 
+func TestResolveZone(t *testing.T) {
+	cities, err := data.ReadCities()
+	if err != nil {
+		panic(err)
+	}
+
+	zone, err := ResolveZone(cities, "Singapore-SG")
+	if err != nil {
+		t.Errorf("want error %v, got error %v", nil, err)
+	}
+	wantCity, _ := SearchCities(cities, "Singapore-SG")
+	// TODO: instead of pointer comparison, do .Equals()
+	if zone.City != wantCity {
+		t.Errorf("want City %v, got City %v", wantCity, zone.City)
+	}
+	if zone.Offset != nil {
+		t.Errorf("want Offset %v, got Offset %v", nil, zone.Offset)
+	}
+
+	zone, err = ResolveZone(cities, "+04:00")
+	if err != nil {
+		t.Errorf("want error %v, got error %v", nil, err)
+	}
+	if zone.City != nil {
+		t.Errorf("want City %v, got City %v", nil, zone.City)
+	}
+	wantOffset, _ := ParseZoneOffset("+04:00")
+	if zone.Offset.String() != wantOffset.String() {
+		t.Errorf("want Offset %v, got Offset %v", wantOffset, zone.Offset)
+	}
+
+	zone, err = ResolveZone(cities, "+04:80")
+	if err != ErrZoneNotFound {
+		t.Errorf("want error %v, got error %v", ErrZoneOffsetInvalid, err)
+	}
+
+	zone, err = ResolveZone(cities, "04:80")
+	if err != ErrZoneNotFound {
+		t.Errorf("want error %v, got error %v", ErrZoneNotFound, err)
+	}
+}
+
 func BenchmarkReadCities(b *testing.B) {
 	// This does take quite a while
 	for i := 0; i < b.N; i++ {
