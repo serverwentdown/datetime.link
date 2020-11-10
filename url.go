@@ -44,14 +44,18 @@ func ParseRequest(u *url.URL) (Request, error) {
 	if len(timeString) == 0 {
 		return Request{}, ErrMissingComponent
 	}
-	for _, f := range timeFormats {
-		t, err = time.Parse(f, timeString)
-		if err == nil {
-			break
+	if timeString == "now" {
+		t = time.Now()
+	} else {
+		for _, f := range timeFormats {
+			t, err = time.Parse(f, timeString)
+			if err == nil {
+				break
+			}
 		}
-	}
-	if err != nil {
-		return Request{}, fmt.Errorf("%w: %v", ErrInvalidTime, err)
+		if err != nil {
+			return Request{}, fmt.Errorf("%w: %v", ErrInvalidTime, err)
+		}
 	}
 
 	// Split zones
