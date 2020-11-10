@@ -47,8 +47,8 @@ should not be accounted for. These are guarenteed to be stable and accurate.
 
 ## Timezone Data
 
-Go [relies on local tzdata](https://golang.org/pkg/time/#LoadLocation), and thus
-`datetime.link` relies on local tzdata. 
+[Go relies on local tzdata](https://golang.org/pkg/time/#LoadLocation), and thus
+`datetime.link` relies on it too.
 
 ## Upcoming Improvements
 
