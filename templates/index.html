@@ -19,7 +19,7 @@
 				{{with resolveZone $app .}}
 					{{if .Error}}
 						<d-zoneerror>
-							Unable to load zone "{{$zoneName}}". The URL path might not be valid
+							Unable to load zone "{{$zoneName}}". The zone could be invalid
 						</d-zoneerror>
 					{{else}}
 						{{$zt := $t.In .Location}}
