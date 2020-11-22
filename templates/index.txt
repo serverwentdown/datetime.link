@@ -16,4 +16,21 @@ Unable to load zone "{{$zoneName | thisIsSafe}}". The zone could be invalid
 {{/* */}}
 		{{- end -}}
 	{{- end -}}
+{{- else -}}
+Usage: https://datetime.link/DATETIME/ZONE_LIST
+
+DATETIME:   Follows RFC3339 (based on ISO 8601)
+Examples:   2006-01-02T15:04:05-07:00
+            2020-11-10T17:17:00+08:00
+            1970-01-01T00:00:00Z
+
+ZONE_LIST:  A comma-separated list of zone IDs
+            Zone IDs can be found at https://datetime.link/data/cities.json
+            Zone IDs can also be fixed offsets
+Examples:   Singapore-SG,+06:00,-08:30,London-England-GB
+            St_John's-Newfoundland_and_Labrador-CA
+            Tiruchirappalli-Tamil_Nadu-IN,New_York_City-New_York-US
+
+For more information: https://serverwentdown.github.io/datetime.link/
+{{/* */}}
 {{- end -}}
