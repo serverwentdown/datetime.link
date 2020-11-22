@@ -1,13 +1,15 @@
 {{- $app := .App -}}
 {{- $t := .Req.Time -}}
-{{- range .Req.Zones -}}
-{{- $zoneName := . -}}
-{{with resolveZone $app .}}
+{{- range $index, $zoneName := .Req.Zones -}}
+	{{- with resolveZone $app $zoneName -}}
 	{{- if .Error}}
 Unable to load zone "{{$zoneName | thisIsSafe}}". The zone could be invalid
 {{/* */}}
 	{{- else -}}
-		{{- $zt := $t.In .Location}}
+		{{- $zt := $t.In .Location -}}
+		{{- if ne $index 0}}
+{{/* */}}
+		{{- end -}}
 {{.Name | thisIsSafe}}
 		{{- if not .IsOffset }} {{.TimeOffset $t | formatOffset | thisIsSafe}}
 		{{- end}}

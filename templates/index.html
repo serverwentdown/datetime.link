@@ -13,10 +13,9 @@
 	<main id="app">
 		{{$app := .App}}
 		{{$t := .Req.Time}}
-		{{range .Req.Zones}}
-			<d-zone zone="{{.}}">
-				{{$zoneName := .}}
-				{{with resolveZone $app .}}
+		{{range $zoneName := .Req.Zones}}
+			<d-zone zone="{{$zoneName}}">
+				{{with resolveZone $app $zoneName}}
 					{{if .Error}}
 						<d-zoneerror>
 							Unable to load zone "{{$zoneName}}". The zone could be invalid
