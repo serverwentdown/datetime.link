@@ -1,2 +1,2 @@
 {{.Status}} {{.Status | statusText | thisIsSafe}}
-{{.Error | thisIsSafe}}
+{{.Error.Error | thisIsSafe}}

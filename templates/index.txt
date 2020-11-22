@@ -1,1 +1,19 @@
-TODO
+{{- $app := .App -}}
+{{- $t := .Req.Time -}}
+{{- range .Req.Zones -}}
+{{- $zoneName := . -}}
+{{with resolveZone $app .}}
+	{{- if .Error}}
+Unable to load zone "{{$zoneName | thisIsSafe}}". The zone could be invalid
+{{/* */}}
+	{{- else -}}
+		{{- $zt := $t.In .Location}}
+{{.Name | thisIsSafe}}
+		{{- if not .IsOffset }} {{.TimeOffset $t | formatOffset | thisIsSafe}}
+		{{- end}}
+{{$zt.Format "2006-01-02"}}
+{{$zt.Format "15:04"}}
+{{/* */}}
+		{{- end -}}
+	{{- end -}}
+{{- end -}}
