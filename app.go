@@ -53,8 +53,8 @@ type appRequest struct {
 }
 
 type appSearch struct {
-	App Datetime
-	Req map[string]string
+	App    Datetime
+	Search []*data.City
 }
 
 // index handles all incoming page requests
@@ -111,8 +111,12 @@ func (app Datetime) search(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// TODO: do search
-	search := map[string]string{
-		"hi": "hello",
+	query := req.URL.Query()
+	search, err := FullSearchCities(app.cities, query.Get("zone"))
+	if err != nil {
+		l.Error("search failed", zap.Error(err))
+		app.error(HTTPError{http.StatusInternalServerError, err}, w, req)
+		return
 	}
 
 	l.Debug("rendering template", zap.Reflect("search", search))

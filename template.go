@@ -19,13 +19,20 @@ func (app Datetime) loadTemplate(name string, w http.ResponseWriter, req *http.R
 	accept := req.Header.Get("Accept")
 	tmpl, contentType, acceptable := app.chooseTemplate(accept, name)
 	if !acceptable {
-		app.simpleError(HTTPError{http.StatusNotAcceptable, nil}, w, req)
+		if name == "error" {
+			app.simpleError(HTTPError{http.StatusNotAcceptable, nil}, w, req)
+			return nil
+		}
+		app.error(HTTPError{http.StatusNotAcceptable, nil}, w, req)
 		return nil
 	}
 	if tmpl == nil {
 		err := fmt.Errorf("%w \"%s\" for \"%s\"", ErrTemplateNotFound, name, accept)
 		l.Warn("unable to find template", zap.Error(err), zap.String("name", name), zap.String("accept", accept))
-		app.simpleError(HTTPError{http.StatusNotAcceptable, err}, w, req)
+		if name == "error" {
+			app.simpleError(HTTPError{http.StatusNotAcceptable, err}, w, req)
+		}
+		app.error(HTTPError{http.StatusNotAcceptable, err}, w, req)
 		//app.simpleError(HTTPError{http.StatusInternalServerError, ErrNoTemplate}, w, req)
 		return nil
 	}
