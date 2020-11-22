@@ -41,6 +41,7 @@ func NewDatetime() (*Datetime, error) {
 	mux.Handle("/js/", http.FileServer(http.Dir("assets")))
 	mux.Handle("/css/", http.FileServer(http.Dir("assets")))
 	mux.Handle("/favicon.ico", http.FileServer(http.Dir("assets")))
+	mux.HandleFunc("/search", app.search)
 	mux.HandleFunc("/", app.index)
 
 	return app, nil
@@ -49,6 +50,11 @@ func NewDatetime() (*Datetime, error) {
 type appRequest struct {
 	App Datetime
 	Req Request
+}
+
+type appSearch struct {
+	App Datetime
+	Req map[string]string
 }
 
 // index handles all incoming page requests
@@ -80,6 +86,37 @@ func (app Datetime) index(w http.ResponseWriter, req *http.Request) {
 
 	l.Debug("rendering template", zap.Reflect("request", request))
 	err = tmpl.Execute(w, appRequest{app, request})
+	if err != nil {
+		l.Error("templating failed", zap.Error(err))
+		app.templateError(HTTPError{http.StatusInternalServerError, err}, w, req)
+		return
+	}
+}
+
+// search handles zone search queries
+func (app Datetime) search(w http.ResponseWriter, req *http.Request) {
+	var err error
+
+	if req.Method != http.MethodGet && req.Method != http.MethodHead {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	tmpl := app.loadTemplate("search", w, req)
+	if tmpl == nil {
+		return
+	}
+	if req.Method == http.MethodHead {
+		return
+	}
+
+	// TODO: do search
+	search := map[string]string{
+		"hi": "hello",
+	}
+
+	l.Debug("rendering template", zap.Reflect("search", search))
+	err = tmpl.Execute(w, appSearch{app, search})
 	if err != nil {
 		l.Error("templating failed", zap.Error(err))
 		app.templateError(HTTPError{http.StatusInternalServerError, err}, w, req)

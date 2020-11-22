@@ -57,6 +57,7 @@ type responseType int
 const (
 	responsePlain   responseType = iota
 	responseHTML    responseType = iota
+	responseJSON    responseType = iota
 	responseAny     responseType = iota
 	responseUnknown responseType = iota
 )
@@ -64,6 +65,7 @@ const (
 const (
 	responsePlainMime = "text/plain"
 	responseHTMLMime  = "text/html"
+	responseJSONMime  = "application/json"
 	responseAnyMime   = "*/*"
 )
 
@@ -76,6 +78,9 @@ func chooseResponseType(accept string) responseType {
 		}
 		if m.media == responseHTMLMime {
 			return responseHTML
+		}
+		if m.media == responseJSONMime {
+			return responseJSON
 		}
 		if m.media == responseAnyMime {
 			return responseAny

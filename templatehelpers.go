@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"html/template"
 	"net/http"
 
@@ -10,6 +11,8 @@ import (
 var templateFuncs = map[string]interface{}{
 	"statusText": templateFuncStatusText,
 	"thisIsSafe": templateFuncThisIsSafe,
+	// Encoding
+	"jsonMarshal": templateFuncJSONMarshal,
 	// Formatting
 	"formatOffset": templateFuncFormatOffset,
 	// Logic
@@ -21,6 +24,14 @@ func templateFuncStatusText(s int) string {
 }
 func templateFuncThisIsSafe(s string) template.HTML {
 	return template.HTML(s)
+}
+
+func templateFuncJSONMarshal(v interface{}) string {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return ""
+	}
+	return string(b)
 }
 
 func templateFuncFormatOffset(offset int) string {
