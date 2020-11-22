@@ -66,6 +66,12 @@ footer {
 	padding: 1.5rem;
 }
 
+/* Web Component Fixes */
+
+template {
+	display: none;
+}
+
 /* Essentials */
 
 .list-inline {
@@ -202,7 +208,7 @@ d-zoneerror {
 }
 
 /* Left container */
-d-zoneinfo {
+.zoneinfo {
 	flex: 1 1 0;
 	width: 0px; /* Force sizing from zero */
 
@@ -212,7 +218,7 @@ d-zoneinfo {
 	margin-right: 1rem;
 }
 @media (max-width: 319px) {
-	d-zoneinfo {
+	.zoneinfo {
 		width: 100%;
 	}
 }
@@ -221,7 +227,7 @@ d-zonename {
 	display: flex;
 	justify-content: flex-start;
 }
-d-zonename d-zonearea {
+d-zonename .zonearea {
 	flex: 0 1 auto;
 
 	display: block;
@@ -230,7 +236,7 @@ d-zonename d-zonearea {
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
-d-zonename d-zonecountry {
+d-zonename .zonecountry {
 	flex: 0 0 auto;
 
 	display: block;
@@ -251,7 +257,7 @@ d-date {
 }
 
 /* Right container */
-d-zonefigure {
+.zonefigure {
 	display: block;
 	margin-top: 1rem;
 	margin-bottom: 1rem;

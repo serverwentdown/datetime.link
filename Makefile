@@ -60,7 +60,9 @@ assets/js/third-party/luxon.min.js:
 ICONS = \
 	solid_sun \
 	solid_moon \
-	solid_adjust
+	solid_adjust \
+	solid_trash \
+	solid_plus
 
 .PHONY: download-icons
 download-icons: $(foreach icon,$(ICONS),templates/icon_$(icon).svg)

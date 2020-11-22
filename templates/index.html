@@ -22,11 +22,11 @@
 						</d-zoneerror>
 					{{else}}
 						{{$zt := $t.In .Location}}
-						<d-zoneinfo>
+						<div class="zoneinfo">
 							{{if not .IsOffset}}
 							<d-zonename>
-								<d-zonearea>{{.FirstName}},</d-zonearea>
-								<d-zonecountry>&nbsp;{{.City.Country.Ref}}</d-zonecountry>
+								<span class="zonearea">{{.FirstName}},</span>
+								<span class="zonecountry">&nbsp;{{.City.Country.Ref}}</span>
 							</d-zonename>
 							{{else}}
 							<d-zonename>
@@ -37,17 +37,21 @@
 								<d-zoneoffset>{{.TimeOffset $t | formatOffset}}</d-zoneoffset>
 							{{end}}
 							<d-date date="{{$zt.Format "2006-01-02"}}">{{$zt.Format "2006-01-02"}}</d-date>
-						</d-zoneinfo>
-						<d-zonefigure>
+						</div>
+						<div class="zonefigure">
 							<d-time time="{{$zt.Format "15:04"}}">{{$zt.Format "15:04"}}</d-time>
-						</d-zonefigure>
+						</div>
 					{{end}}
 				{{end}}
 			</d-zone>
 		{{end}}
+
+		<d-zoneadd></d-zoneadd>
 	</main>
 
 	{{template "footer.html"}}
+
+	{{template "interactive-icons.html"}}
 
 	<script src="/js/third-party/luxon.min.js"></script>
 	<script src="/js/interactive.js" async></script>
