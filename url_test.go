@@ -50,26 +50,26 @@ func TestURLParse(t *testing.T) {
 func TestURLParseFail(t *testing.T) {
 	u := mustURLParse("http://test/2002-08-30T14:00+06:00/")
 	_, err := ParseRequest(u)
-	if !errors.Is(err, ErrMissingComponent) {
-		t.Errorf("got error %v, want error %v", err, ErrMissingComponent)
+	if !errors.Is(err, ErrComponentsMismatch) {
+		t.Errorf("got error %v, want error %v", err, ErrComponentsMismatch)
 	}
 
 	u = mustURLParse("http://test/")
 	_, err = ParseRequest(u)
-	if !errors.Is(err, ErrMissingComponent) {
-		t.Errorf("got error %v, want error %v", err, ErrMissingComponent)
+	if !errors.Is(err, ErrComponentsMismatch) {
+		t.Errorf("got error %v, want error %v", err, ErrComponentsMismatch)
 	}
 
 	u = mustURLParse("http://test")
 	_, err = ParseRequest(u)
-	if !errors.Is(err, ErrMissingComponent) {
-		t.Errorf("got error %v, want error %v", err, ErrMissingComponent)
+	if !errors.Is(err, ErrComponentsMismatch) {
+		t.Errorf("got error %v, want error %v", err, ErrComponentsMismatch)
 	}
 
 	u = mustURLParse("http://test/hi/hi/hi")
 	_, err = ParseRequest(u)
-	if !errors.Is(err, ErrTooManyComponent) {
-		t.Errorf("got error %v, want error %v", err, ErrTooManyComponent)
+	if !errors.Is(err, ErrComponentsMismatch) {
+		t.Errorf("got error %v, want error %v", err, ErrComponentsMismatch)
 	}
 
 	u = mustURLParse("http://test/2000-01-13T00:00Z08:00/hi")

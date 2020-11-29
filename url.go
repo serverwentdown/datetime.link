@@ -8,11 +8,8 @@ import (
 	"time"
 )
 
-// ErrMissingComponent is thrown when the URL has empty or missing components
-var ErrMissingComponent = errors.New("missing path component")
-
-// ErrTooManyComponent is thrown when there are more than 2 components
-var ErrTooManyComponent = errors.New("too many path components")
+// ErrComponentsMismatch is thrown when the URL has empty or missing components
+var ErrComponentsMismatch = errors.New("missing or too many path components")
 
 // ErrInvalidTime is thrown in a time.ParseError
 var ErrInvalidTime = errors.New("invalid ISO 8601 time")
@@ -31,18 +28,15 @@ func ParseRequest(u *url.URL) (Request, error) {
 	var err error
 
 	parts := strings.Split(u.Path, "/")[1:]
-	if len(parts) > 2 {
-		return Request{}, ErrTooManyComponent
-	}
-	if len(parts) < 1 {
-		return Request{}, ErrMissingComponent
+	if len(parts) > 2 || len(parts) < 1 {
+		return Request{}, ErrComponentsMismatch
 	}
 
 	// Parse time portion
 	var t time.Time
 	timeString := parts[0]
 	if len(timeString) == 0 {
-		return Request{}, ErrMissingComponent
+		return Request{}, ErrComponentsMismatch
 	}
 	if timeString == "now" {
 		t = time.Now()
@@ -60,12 +54,12 @@ func ParseRequest(u *url.URL) (Request, error) {
 
 	// Split zones
 	var z []string
-	zoneString := ""
+	zoneString := "local"
 	if len(parts) >= 2 {
 		zoneString = parts[1]
 	}
 	if len(zoneString) == 0 {
-		return Request{}, ErrMissingComponent
+		return Request{}, ErrComponentsMismatch
 	}
 	z = strings.Split(zoneString, ",")
 

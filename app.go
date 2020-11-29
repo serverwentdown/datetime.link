@@ -77,8 +77,18 @@ func (app Datetime) index(w http.ResponseWriter, req *http.Request) {
 	request := Request{}
 	if req.URL.Path != "/" {
 		request, err = ParseRequest(req.URL)
+		if errors.Is(err, ErrComponentsMismatch) {
+			l.Debug("not matching components", zap.Error(err))
+			app.error(HTTPError{http.StatusNotFound, err}, w, req)
+			return
+		}
+		if errors.Is(err, ErrInvalidTime) {
+			l.Debug("not matching components", zap.Error(err))
+			app.error(HTTPError{http.StatusNotFound, err}, w, req)
+			return
+		}
 		if err != nil {
-			l.Debug("parse failed", zap.Error(err))
+			l.Info("parse failed", zap.Error(err))
 			app.error(HTTPError{http.StatusBadRequest, err}, w, req)
 			return
 		}
@@ -119,7 +129,7 @@ func (app Datetime) search(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	l.Debug("rendering template", zap.Reflect("search", search))
+	//l.Debug("rendering template", zap.Reflect("search", search))
 	err = tmpl.Execute(w, appSearch{app, search})
 	if err != nil {
 		l.Error("templating failed", zap.Error(err))
