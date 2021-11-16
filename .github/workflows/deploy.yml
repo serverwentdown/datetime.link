@@ -58,15 +58,15 @@ jobs:
         mkdir -p ~/.ssh
         echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_ed25519
         chmod 600 ~/.ssh/id_ed25519
-        echo "[pricklypear.cacti.makerforce.io]:26779 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGd9tL56+YUDQjyGy3iZNGUtjVkvAD442Q6Kt53Zsy8g" >> ~/.ssh/known_hosts
+        echo "pricklypear.cacti.makerforce.io ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGd9tL56+YUDQjyGy3iZNGUtjVkvAD442Q6Kt53Zsy8g" >> ~/.ssh/known_hosts
 
     - name: Re-pull
       run: |
-        ssh -p 26779 datetime@pricklypear.cacti.makerforce.io "podman login --username $GITHUB_ACTOR --password ${{ secrets.CR_PAT }} ghcr.io && podman pull ghcr.io/serverwentdown/datetime.link:latest"
+        ssh datetime@pricklypear.cacti.makerforce.io "podman login --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} ghcr.io && podman pull ghcr.io/serverwentdown/datetime.link:main"
 
     - name: Restart
       run: |
-        ssh -p 26779 datetime@pricklypear.cacti.makerforce.io "systemctl restart --user container-datetime.service"
+        ssh datetime@pricklypear.cacti.makerforce.io "systemctl restart --user container-datetime.service"
 
 
 # vim: set et ts=2 sw=2:
